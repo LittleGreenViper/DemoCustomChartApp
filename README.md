@@ -12,9 +12,9 @@ The chart will display dummy data, from an application that has user accounts. T
 
 The project is set up as a very simple, 1-view SwiftUI app.
 
-You should access the project, by opening the workspace (`DemoCustomChartApp.xcworkspace`) file.
+You should access the project, by opening [the workspace (`DemoCustomChartApp.xcworkspace`)](https://github.com/LittleGreenViper/DemoCustomChartApp/tree/master/DemoCustomChartApp.xcworkspace) file.
 
-If you do that, the project navigator panel (left side) will look like this (in the `00.Starting-Point` tag):
+If you do that, the project navigator panel (left side) will look like this (in the [`00.Starting-Point`](https://github.com/LittleGreenViper/DemoCustomChartApp/tree/00.Starting-Point) tag):
 
 | Figure 0: Initial Xcode Navigator Display |
 | :-: |
@@ -80,7 +80,7 @@ struct DemoChartDisplay: View {
 }
 ```
 
-This is the most basic bar chart that you can have, with a "legend" at the bottom (that [`chartForegroundStyleScale`](https://developer.apple.com/documentation/swiftui/view/chartforegroundstylescale(_:\)) adornment, which displays the dots, followed by the names of the user types).
+This is the most basic bar chart that you can have, with a "legend" at the bottom (that [`chartForegroundStyleScale`](https://developer.apple.com/documentation/swiftui/view/chartforegroundstylescale\(_:\)) adornment, which displays the dots, followed by the names of the user types).
 
 Note that each bar has two colors, with the green color representing the number of "active" users, and the blue color representing the number of "new" users.
 
