@@ -1,8 +1,8 @@
 ![Project Icon](icon.png)
 
-# Demonstration Custom Chart
+# Demonstration Custom [SwiftUI Chart](https://developer.apple.com/documentation/Charts/Chart)
 
-This project demonstrates simple customizing SwiftUI Charts, by modifying the display, and adding "scrub to select," and "pinch to zoom" functionality.
+This project demonstrates simple customizing [SwiftUI Charts](https://developer.apple.com/documentation/Charts/Chart), by modifying the display, and adding "scrub to select," and "pinch to zoom" functionality.
 
 ## Chart Data
 
@@ -80,7 +80,7 @@ struct DemoChartDisplay: View {
 }
 ```
 
-This is the most basic bar chart that you can have, with a "legend" at the bottom (that `chartForegroundStyleScale` adornment, which displays the dots, followed by the names of the user types).
+This is the most basic bar chart that you can have, with a "legend" at the bottom (that [`chartForegroundStyleScale`](https://developer.apple.com/documentation/swiftui/view/chartforegroundstylescale(_:\)) adornment, which displays the dots, followed by the names of the user types).
 
 Note that each bar has two colors, with the green color representing the number of "active" users, and the blue color representing the number of "new" users.
 
