@@ -49,7 +49,7 @@ At this point, we have not done any customization. The table is completely defau
 | :-: |
 | ![Figure 1](img/Fig-01.png) |
 
-The code in the [`DemoChartDisplay.swift`](https://github.com/LittleGreenViper/DemoCustomChartApp/tree/master/Sources/DemoCustomChartApp/DemoChartDisplay.swift) file, will look like this (comments removed, in order to reduce the code listing size):
+The code in the [`DemoChartDisplay.swift`](https://github.com/LittleGreenViper/DemoCustomChartApp/blob/00.Starting-Point/Sources/DemoCustomChartApp/DemoChartDisplay.swift) file, will look like this (comments removed, in order to reduce the code listing size):
 
 #### Listing 1. Basic Bar Chart Display
 
