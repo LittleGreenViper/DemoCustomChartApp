@@ -151,13 +151,13 @@ sample_date,total_users,new_users
             fileprivate enum _UserTypes {
                 /* ######################################### */
                 /**
-                 The total number of "new" users.
+                 The total number of "active" users (users that have logged in, at least once).
                  */
                 case activeUsers(numberOfActiveUsers: Int)
                 
                 /* ######################################### */
                 /**
-                 The total number of "active" users (users that have logged in, at least once).
+                 The total number of "new" users.
                  */
                 case newUsers(numberOfNewUsers: Int)
                 
