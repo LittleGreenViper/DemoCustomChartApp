@@ -22,22 +22,22 @@ If you do that, the project navigator panel (left side) will look like this (in 
 
 ### Support Code
 
-Much of the code is in a subdirectory, labeled `Sources/DemoCustomChartApp/Structure`. This has the files that we won't be looking at.
+Much of the code is in a subdirectory, labeled [`Sources/DemoCustomChartApp/Structure`](https://github.com/LittleGreenViper/DemoCustomChartApp/tree/master/Sources/DemoCustomChartApp/Structure). This has the files that we won't be looking at.
 
 They consist of:
 
-- `Sources/DemoCustomChartApp/Structure/ChartData.swift`
+- [`Sources/DemoCustomChartApp/Structure/ChartData.swift`](https://github.com/LittleGreenViper/DemoCustomChartApp/tree/master/Sources/DemoCustomChartApp/Structure/ChartData.swift)
     This is the data provider for the chart data. It is a simple struct that converts some CSV data into a form that can be easily fed to the chart (plottable data).
     
-- `Sources/DemoCustomChartApp/Structure/ContainerApp.swift`
+- [`Sources/DemoCustomChartApp/Structure/ContainerApp.swift`](https://github.com/LittleGreenViper/DemoCustomChartApp/tree/master/Sources/DemoCustomChartApp/Structure/ContainerApp.swift)
     This is the actual app and main screen wrapper.
     
-- `Sources/DemoCustomChartApp/Structure/Assets.xcassets`
+- [`Sources/DemoCustomChartApp/Structure/Assets.xcassets`](https://github.com/LittleGreenViper/DemoCustomChartApp/tree/master/Sources/DemoCustomChartApp/Structure/Assets.xcassets)
     This has the graphic assets, such as the accent color and app icon.
     
 ### Demonstration Code
 
-The code that we will be working with, is in the main project directory, and is called `Sources/DemoCustomChartApp/DemoChartDisplay.swift`.
+The code that we will be working with, is in the main project directory, and is called [`Sources/DemoCustomChartApp/DemoChartDisplay.swift`](https://github.com/LittleGreenViper/DemoCustomChartApp/tree/master/Sources/DemoCustomChartApp/DemoChartDisplay.swift).
 
 ## Tags
 
@@ -49,7 +49,7 @@ At this point, we have not done any customization. The table is completely defau
 | :-: |
 | ![Figure 1](img/Fig-01.png) |
 
-The code in the `DemoChartDisplay.swift` file, will look like this (comments removed, in order to reduce the code listing size):
+The code in the [`DemoChartDisplay.swift`](https://github.com/LittleGreenViper/DemoCustomChartApp/tree/master/Sources/DemoCustomChartApp/DemoChartDisplay.swift) file, will look like this (comments removed, in order to reduce the code listing size):
 
 #### Listing 1. Basic Bar Chart Display
 
