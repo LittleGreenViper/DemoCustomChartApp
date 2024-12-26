@@ -151,15 +151,15 @@ sample_date,total_users,new_users
             fileprivate enum _UserTypes {
                 /* ######################################### */
                 /**
-                 The total number of "active" users (users that have logged in, at least once).
+                 The total number of "new" users (users that have never logged in).
                  */
-                case activeUsers(numberOfActiveUsers: Int)
+                case newUsers(numberOfNewUsers: Int)
                 
                 /* ######################################### */
                 /**
-                 The total number of "new" users.
+                 The total number of "active" users (users that have logged in, at least once).
                  */
-                case newUsers(numberOfNewUsers: Int)
+                case activeUsers(numberOfActiveUsers: Int)
                 
                 /* ######################################### */
                 /**
@@ -252,7 +252,7 @@ sample_date,total_users,new_users
         
         /* ################################################# */
         /**
-         (Computed Property) The total number of "new" users.
+         (Computed Property) The total number of "new" users (users that have never logged in).
          */
         private var _newUsers: Int { _dataRow["new_users"] as? Int ?? 0 }
         
@@ -289,6 +289,8 @@ sample_date,total_users,new_users
         /* ################################################# */
         /**
          (Computed Property) This returns the row data in one set of plottable data points.
+         
+         Active users are in the first element, and new users in the second.
          */
         public var userTypes: [PlottableUserTypes] {
             [
@@ -333,7 +335,7 @@ sample_date,total_users,new_users
     /**
      (Computed Property) This provides a legend for the chart.
      
-     The order of elements is first -> left, last -> right.
+     The order of elements is first -> left (active users), last -> right (new users).
      */
     public var legend: [LegendElement] {
         [
