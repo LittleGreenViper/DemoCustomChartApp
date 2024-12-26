@@ -41,7 +41,7 @@ The code that we will be working with, is in the main project directory, and is 
 
 ## Tags
 
-### Tag 00.Starting-Point
+### [00.Starting-Point](https://github.com/LittleGreenViper/DemoCustomChartApp/releases/tag/00.Starting-Point)
 
 At this point, we have not done any customization. The table is completely default. We have an app that will compile, run, and display a chart, like that, shown in Figure 1:
 
