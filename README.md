@@ -98,7 +98,7 @@ We do this by adding a [`chartYAxis`](https://developer.apple.com/documentation/
 
 This has an [`AxisContentBuilder`](https://developer.apple.com/documentation/Charts/AxisContentBuilder) closure that we'll use to add the specific customizations we'll need.
 
-Inside of that, we will add an [`AxisMarks`](https://developer.apple.com/documentation/charts/axismarks) struct, using [the ContentBuilder variant of the initializer](https://developer.apple.com/documentation/charts/axismarks/init(preset:position:values:content:\)\-1n9x7). We also tell it to be [aligned](https://developer.apple.com/documentation/charts/axismarkpreset/aligned) to the [leading](https://developer.apple.com/documentation/charts/axismarkposition/leading) edge of the chart.
+Inside of that, we will add an [`AxisMarks`](https://developer.apple.com/documentation/charts/axismarks) struct, using [the ContentBuilder variant of the initializer](https://developer.apple.com/documentation/charts/axismarks/init(preset:position:values:content:\)\-1n9x7)). We also tell it to be [aligned](https://developer.apple.com/documentation/charts/axismarkpreset/aligned) to the [leading](https://developer.apple.com/documentation/charts/axismarkposition/leading) edge of the chart.
 
 This will iterate through all the values the chart wants to display (at present, we are leeting SwiftUI figure out how many values to show).
 
