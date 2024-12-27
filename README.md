@@ -195,3 +195,13 @@ Which results in the following appearance:
 | ![Figure 4](img/Fig-04.png) |
 
 Much better (but still not perfect).
+
+### [03.XAxis-Cleanup-2](https://github.com/LittleGreenViper/DemoCustomChartApp/releases/tag/03.XAxis-Cleanup-2)
+
+Next, let's look at the dates (X-axis values), and where they are indicated in the chart.
+
+We already know that the date range is from October 15, 2024, through December 24, 2024 (71 days), but the displayed values in the chart (as seen in our example from an iPhone 13Mini), are October 27, November 10, November 24, December 8, and December 22 (14-day gaps). These dates were selected automatically by SwiftUI Charts. October 15 is not indicated, because it is 13 days behind October 27, and December 24 is not indicated, because it is 2 days from December 22.
+
+What we would probably prefer to see, is October 15, October 29, November 12, November 26, December 10, and December 24. The gaps are still 2 weeks apart, but the endpoints fit our date range.
+
+Fortunately, we can do that.
