@@ -79,7 +79,7 @@ struct DemoChartDisplay: View {
             AxisMarks(preset: .aligned, position: .bottom) { _ in
                 AxisTick(stroke: StrokeStyle()) // This adds a short "tick" between the value label and the leading edge of the chart. Adding the `stroke` parameter, with a default `StrokeStyle` instance, makes it a solid (as opposed to dashed) line.
                 AxisGridLine()                  // This draws a gridline, vertically down the chart, from the top of the chart, to the bottom. Default is a thin, dashed line.
-                AxisValueLabel(anchor: .top)    // This draws the value for this Y-axis level, as a label. It is set to anchor its trailing edge to the axis tick.
+                AxisValueLabel(anchor: .top)    // This draws the value for this X-axis level, as a label. It is set to anchor its top center to the axis tick.
             }
         }
     }
