@@ -112,9 +112,9 @@ First, the tick. We'll add an [`AxisTick`](https://developer.apple.com/documenta
 
 Next, the [`AxisGridLine`](https://developer.apple.com/documentation/charts/axisgridline) that will extend across the chart. We'll stick with the default, which is just a thin, solid horizontal line.
 
-Finally, the [`AxisValueLabel`](https://developer.apple.com/documentation/charts/axisvaluelabel). This is the actual displayed value. We specify that the attachment to the chart, is on the trailing edge (default is leading).
+Finally, the [`AxisValueLabel`](https://developer.apple.com/documentation/charts/axisvaluelabel). This is the actual displayed value. We specify that the attachment to the chart (the `anchor` parameter), is on the [trailing](https://developer.apple.com/documentation/swiftui/unitpoint/trailing) edge (default is [leading](https://developer.apple.com/documentation/swiftui/unitpoint/leading)).
 
-The code in the [`DemoChartDisplay.swift`](https://github.com/LittleGreenViper/DemoCustomChartApp/blob/01.YAxis-Position/Sources/DemoCustomChartApp/DemoChartDisplay.swift) file, will look like this (comments removed, in order to reduce the code listing size):
+The code in the [`DemoChartDisplay.swift`](https://github.com/LittleGreenViper/DemoCustomChartApp/blob/01.YAxis-Position/Sources/DemoCustomChartApp/DemoChartDisplay.swift) file, will now look like this (comments removed, in order to reduce the code listing size):
 
 #### Listing 2. With Y-Axis Adornment
 
