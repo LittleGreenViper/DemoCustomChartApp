@@ -100,7 +100,7 @@ This has an [`AxisContentBuilder`](https://developer.apple.com/documentation/Cha
 
 Inside of that, we will add an [`AxisMarks`](https://developer.apple.com/documentation/charts/axismarks) struct, using [the ContentBuilder variant of the initializer](https://developer.apple.com/documentation/charts/axismarks/init(preset:position:values:content:\)\-1n9x7)). We also tell it to be [aligned](https://developer.apple.com/documentation/charts/axismarkpreset/aligned) to the [leading](https://developer.apple.com/documentation/charts/axismarkposition/leading) edge of the chart.
 
-This will iterate through all the values the chart wants to display (at present, we are leeting SwiftUI figure out how many values to show).
+This will iterate through all the values the chart wants to display (at present, we are letting SwiftUI figure out how many values to show).
 
 The argument that is passed into the content builder closure, is an instance of [`AxisValue`](https://developer.apple.com/documentation/charts/axisvalue/), which has the axis element value and position. We'll ignore it, for now.
 
