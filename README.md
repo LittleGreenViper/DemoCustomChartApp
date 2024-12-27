@@ -14,9 +14,9 @@ The chart will display dummy data, from an application that has user accounts. T
 
 The project is set up as a very simple, 1-view SwiftUI app.
 
-You should access the project, by opening [the workspace (`DemoCustomChartApp.xcworkspace`)](https://github.com/LittleGreenViper/DemoCustomChartApp/tree/master/DemoCustomChartApp.xcworkspace) file.
+We should access the project, by opening [the workspace (`DemoCustomChartApp.xcworkspace`)](https://github.com/LittleGreenViper/DemoCustomChartApp/tree/master/DemoCustomChartApp.xcworkspace) file.
 
-If you do that, the project navigator panel (left side) will look like this (in the [`00.Starting-Point`](https://github.com/LittleGreenViper/DemoCustomChartApp/tree/00.Starting-Point) tag):
+If we do that, the project navigator panel (left side) will look like this (in the [`00.Starting-Point`](https://github.com/LittleGreenViper/DemoCustomChartApp/tree/00.Starting-Point) tag):
 
 | Figure 0: Initial Xcode Navigator Display |
 | :-: |
