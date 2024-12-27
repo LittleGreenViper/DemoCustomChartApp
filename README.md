@@ -51,6 +51,8 @@ At this point, we have not done any customization. The table is completely defau
 | :-: |
 | ![Figure 1](img/Fig-01.png) |
 
+> NOTE: The actual appearance may vary, depending on what you are using to render the app. The sample images are taken from an iPhone 13 Mini (simulator), running iOS 17.4, in Dark Mode.
+
 The code in the [`DemoChartDisplay.swift`](https://github.com/LittleGreenViper/DemoCustomChartApp/blob/00.Starting-Point/Sources/DemoCustomChartApp/DemoChartDisplay.swift) file, will look like this (comments removed, in order to reduce the code listing size):
 
 #### Listing 1. Basic Bar Chart Display
@@ -153,3 +155,43 @@ struct DemoChartDisplay: View {
     }
 }
 ```
+
+### [02.XAxis-Cleanup-1](https://github.com/LittleGreenViper/DemoCustomChartApp/releases/tag/02.XAxis-Cleanup-1)
+
+Now, let's look at that X-axis. It's kind of a mess.
+
+The X-axis covers the date range of the dataset, which goes from October 15, 2024, through December 24, 2024, but the X-axis labels look terrible:
+
+| Figure 3: Default X-Axis Labels |
+| :-: |
+| ![Figure 3](img/Fig-03.png) |
+
+Looks like we should do something for the X-axis, like we did, for the Y-axis.
+
+We'll start, by adding a `chartXAxis` struct, with the same basic components that we used for the Y-axis:
+
+#### Listing 3. The X-Axis Adornment
+
+```swift
+.chartXAxis {
+    AxisMarks(preset: .aligned, position: .bottom) { _ in
+        AxisTick(stroke: StrokeStyle())
+        AxisGridLine()
+        AxisValueLabel(anchor: .top)
+    }
+}
+```
+
+In this case, we'll add a [`StrokeStyle`](https://developer.apple.com/documentation/swiftui/strokestyle) instance to the [`AxisTick`](https://developer.apple.com/documentation/charts/axistick) instance, because the default for X-axis gridlines, is dashed, and we should have a solid line between the value label and the edge of the chart.
+
+The `anchor` parameter for the [`AxisValueLabel`](https://developer.apple.com/documentation/charts/axisvaluelabel) will be set to [`top`](https://developer.apple.com/documentation/swiftui/unitpoint/top), which will ensure the label displays centered, under the tickmark.
+
+We'll add that, just below the Y-Axis adornment (we'll show it in the full listing, when we're done).
+
+Which results in the following appearance:
+
+| Figure 4: Modified X-Axis Labels |
+| :-: |
+| ![Figure 4](img/Fig-04.png) |
+
+Much better (but still not perfect).

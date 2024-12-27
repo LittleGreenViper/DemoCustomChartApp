@@ -69,9 +69,17 @@ struct DemoChartDisplay: View {
             // This cycles through all of the value labels on the Y-axis, giving each level of the Y-axis a chance to strut its stuff.
             // The closure parameter is an instance of [`AxisValue`](https://developer.apple.com/documentation/charts/axisvalue), representing the Y-axis value. We ignore this.
             AxisMarks(preset: .aligned, position: .leading) { _ in
-                AxisTick()  // This adds a short "tick" between the value label and the leading edge of the chart. Default is about 4 display units, solid thin line.
-                AxisGridLine()  // This draws a gridline, horizontally across the chart, from the leading edge of the chart, to the triling edge. Default is solid thin line.
+                AxisTick()                          // This adds a short "tick" between the value label and the leading edge of the chart. Default is about 4 display units, solid thin line.
+                AxisGridLine()                      // This draws a gridline, horizontally across the chart, from the leading edge of the chart, to the trailing edge. Default is a solid thin line.
                 AxisValueLabel(anchor: .trailing)   // This draws the value for this Y-axis level, as a label. It is set to anchor its trailing edge to the axis tick.
+            }
+        }
+        // This moves the X-axis labels down, and centers them on the tick marks.
+        .chartXAxis {
+            AxisMarks(preset: .aligned, position: .bottom) { _ in
+                AxisTick(stroke: StrokeStyle()) // This adds a short "tick" between the value label and the leading edge of the chart. Adding the `stroke` parameter, with a default `StrokeStyle` instance, makes it a solid (as opposed to dashed) line.
+                AxisGridLine()                  // This draws a gridline, vertically down the chart, from the top of the chart, to the bottom. Default is a thin, dashed line.
+                AxisValueLabel(anchor: .top)    // This draws the value for this Y-axis level, as a label. It is set to anchor its trailing edge to the axis tick.
             }
         }
     }
