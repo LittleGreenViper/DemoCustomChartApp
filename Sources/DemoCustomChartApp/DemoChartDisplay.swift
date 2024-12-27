@@ -62,5 +62,17 @@ struct DemoChartDisplay: View {
                 data.legend[1].description: data.legend[1].color
             ]
         )
+        // This is covered in more detail in [the SwiftUI documentation](https://developer.apple.com/documentation/charts/customizing-axes-in-swift-charts).
+        // This moves the Y-axis labels over to the leading edge, and displays them, so that their trailing edges are against the chart edge (so they don't overlap the chart).
+        // Default, is for the Y-axis to display against the trailing edge, with the values displayed with their leading edge against the chart's trailing edge.
+        .chartYAxis {
+            // This cycles through all of the value labels on the Y-axis, giving each level of the Y-axis a chance to strut its stuff.
+            // The closure parameter is an instance of [`AxisValue`](https://developer.apple.com/documentation/charts/axisvalue), representing the Y-axis value. We ignore this.
+            AxisMarks(preset: .aligned, position: .leading) { _ in
+                AxisTick()  // This adds a short "tick" between the value label and the leading edge of the chart. Default is about 4 display units, solid thin line.
+                AxisGridLine()  // This draws a gridline, horizontally across the chart, from the leading edge of the chart, to the triling edge. Default is solid thin line.
+                AxisValueLabel(anchor: .trailing)   // This draws the value for this Y-axis level, as a label. It is set to anchor its trailing edge to the axis tick.
+            }
+        }
     }
 }
