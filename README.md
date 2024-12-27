@@ -4,7 +4,7 @@
 
 This project demonstrates simple customizing of [SwiftUI Charts](https://developer.apple.com/documentation/Charts/Chart), by modifying the display, and adding "scrub to select," and "pinch to zoom" functionality.
 
-The idea is to help you to understand how the charts work, and places that we can customize them. The examples will be fairly simple, but every one of these adornments we'll be looking at, will allow a lot more than what we'll be showing you.
+The idea is to understand how the charts work, and places that we can customize them. The examples will be fairly simple, but every one of these adornments we'll be looking at, will allow a lot more than what we'll be covering, here.
 
 ## Chart Data
 
