@@ -237,4 +237,4 @@ What we would probably prefer to see, is October 15, October 29, November 12, No
 
 Fortunately, we can do that.
 
-I have written a utility function (``DataProvider.xAxisDateValues(numberOfValues:,for:)``), in the ``DataProvider`` struct, 
+I have written a utility function ([`DataProvider.xAxisDateValues(numberOfValues:,for:)`](https://github.com/LittleGreenViper/DemoCustomChartApp/blob/master/Sources/DemoCustomChartApp/Structure/DataProvider.swift#L354)), in the ``DataProvider`` struct, 
