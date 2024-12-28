@@ -360,29 +360,32 @@ sample_date,total_users,new_users
               let inDateRange = inDateRange,
               !inDateRange.isEmpty,
               let numberOfDays = Calendar.current.dateComponents([.day], from: inDateRange.lowerBound, to: inDateRange.upperBound).day,
-              0 < numberOfDays
+              1 < numberOfDays
         else { return [] }
         
         var dates = [Date]()    // We start by filling an array of dates, with each day in the range.
 
+        let startingPoint = Calendar.current.startOfDay(for: inDateRange.lowerBound)                            // We start at the beginning of the first day.
+        let endingPoint = Calendar.current.startOfDay(for: inDateRange.upperBound).addingTimeInterval(86400)    // We stop at the end of the last day.
+        
         // We use the calendar to calculate the dates, because it will account for things like DST and leap years.
-        Calendar.current.enumerateDates(startingAfter: inDateRange.lowerBound.addingTimeInterval(-86399),   // We start the day before.
-                                        matching: DateComponents(hour: 0, minute: 0, second:0),
-                                        matchingPolicy: .nextTime) { (date, _, stop) in
-            guard let date = date,
-                  date < inDateRange.upperBound.addingTimeInterval(86400)  // We stop at the end of the last day.
+        Calendar.current.enumerateDates(startingAfter: startingPoint,
+                                        matching: DateComponents(hour: 12, minute: 0, second:0),                // We return noon, of each day. This ensures the bars center.
+                                        matchingPolicy: .nextTime) { inDate, _, inOutStop in
+            guard let date = inDate,
+                  date < endingPoint
             else {
-                stop = true // This causes the iteration to stop.
+                inOutStop = true    // This causes the iteration to stop.
                 return
             }
 
-            dates.append(Calendar.current.startOfDay(for: date).addingTimeInterval(43200))    // We return noon, of each day. This ensures the bars center.
+            dates.append(date)
         }
         
         // At this point, we have an array with consecutive dates; each, representing a single day, and at noon of that day.
         // We now filter out just the ones we want, to satisfy the count request.
         var ret = [Date]()
-        let strideCount = numberOfDays / (inNumberOfValues - 1)
+        let strideCount = numberOfDays / (inNumberOfValues - 1) // Subtract one, because it's an inclusive total.
         for index in stride(from: 0, to: dates.count, by: strideCount) { ret.append(dates[index]) }
         return ret
     }
