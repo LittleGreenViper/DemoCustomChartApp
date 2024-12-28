@@ -31,6 +31,8 @@ import TabularData    // For ``DataFrame``
  > NOTE: This is not meant to be a demonstration of efficient data handling. It's a small dataset, and this just makes it easy to access.
  */
 public struct DataProvider {
+    // MARK: Private Property
+    
     /* ##################################################### */
     /**
      The data that we will supply to the rest of the app, as a string of CSV data.
@@ -117,6 +119,12 @@ sample_date,total_users,new_users
 1735059608,842,63
 """
     
+    /* ################################################# */
+    /**
+     (Stored Property) This contains an explicit sub-range of the entire data X-axis range. Default is the entire range.
+     */
+    private var _dataWindowRange: ClosedRange<Date> = .distantPast ... .distantPast
+
     // MARK: - Public API -
     
     /* ##################################################### */
@@ -243,7 +251,7 @@ sample_date,total_users,new_users
          (Stored Property) The untyped `DataFrame.Row` instance assigned to this struct instance.
          */
         private var _dataRow: DataFrame.Row
-        
+
         /* ################################################# */
         /**
          (Computed Property) The total number of users (private, to simplify).
@@ -261,7 +269,7 @@ sample_date,total_users,new_users
          (Computed Property) The total number of "active" users (users that have logged in, at least once).
          */
         private var _activeUsers: Int { _totalUsers - _newUsers }
-        
+
         /* ################################################# */
         /**
          File private initializer
@@ -299,7 +307,7 @@ sample_date,total_users,new_users
             ]
         }
     }
-    
+
     /* ##################################################### */
     /**
      Public Default initializer
@@ -323,6 +331,11 @@ sample_date,total_users,new_users
         }
         
         rows = convertCSVData()?.rows.map { Row(dataRow: $0) } ?? []
+        
+        if let lowerBound = rows.first?.sampleDate,
+           let upperBound = rows.last?.sampleDate {
+            _dataWindowRange = Calendar.current.startOfDay(for: lowerBound) ... Calendar.current.startOfDay(for: upperBound)
+        }
     }
     
     /* ##################################################### */
@@ -331,6 +344,44 @@ sample_date,total_users,new_users
      */
     public let rows: [Row]
     
+    /* ##################################################### */
+    /**
+     (Computed Property) The date range of our complete list of values.
+     
+     If not able to compute, an empty (distant past) range is returned.
+     */
+    var totalDateRange: ClosedRange<Date> {
+        guard let lowerBound = rows.first?.sampleDate,
+              let upperBound = rows.last?.sampleDate
+        else { return .distantPast ... .distantPast }
+        
+        return Calendar.current.startOfDay(for: lowerBound) ... Calendar.current.startOfDay(for: upperBound)
+    }
+    
+    /* ################################################# */
+    /**
+     (Computed Property) This contains an explicit sub-range of the entire data X-axis range. If in error, an empty range is returned. Default means use the totalDateRange.
+     > NOTE: This is used to specify the displayed range in the chart.
+     */
+    public var dataWindowRange: ClosedRange<Date> {
+        get {
+            guard !_dataWindowRange.isEmpty,
+                  !totalDateRange.isEmpty
+            else { return totalDateRange }
+            
+            return _dataWindowRange.clamped(to: totalDateRange)
+        }
+        
+        set {
+            guard !newValue.isEmpty
+            else {
+                _dataWindowRange = totalDateRange
+                return
+            }
+            _dataWindowRange = newValue.clamped(to: totalDateRange)
+        }
+    }
+
     /* ##################################################### */
     /**
      (Computed Property) This provides a legend for the chart.
@@ -356,22 +407,20 @@ public extension DataProvider {
      This is a utility function, for extracting discrete date steps from a date range. The step size will always be 1 day, and the returned dates will always be at 12:00:00 (Noon).
      
      - parameter numberOfValues: This is an optional (default is 6) integer, with the number of date steps we want. This is an arbitrary number, and will be used to determine the number of full days, between steps, but is not days, in itself.
-     - parameter for: The closed date range we want. The returned dates will be the start of day for the first date in the range, up to the end of day for the last date (may not include the last date, if the days can't be evenly divided).
      
      - returns: An array of `Date` instances, each representing one day. Each date will be at noon. There will be a maximum of inNumberOfValues dates, but there could be less.
      */
-    static func xAxisDateValues(numberOfValues inNumberOfValues: Int = 6, for inDateRange: ClosedRange<Date>?) -> [Date] {
+    func xAxisDateValues(numberOfValues inNumberOfValues: Int = 6) -> [Date] {
         guard 0 < inNumberOfValues,
-              let inDateRange = inDateRange,
-              !inDateRange.isEmpty,
-              let numberOfDays = Calendar.current.dateComponents([.day], from: inDateRange.lowerBound, to: inDateRange.upperBound).day,
+              !dataWindowRange.isEmpty,
+              let numberOfDays = Calendar.current.dateComponents([.day], from: dataWindowRange.lowerBound, to: dataWindowRange.upperBound).day,
               1 < numberOfDays
         else { return [] }
         
         var dates = [Date]()    // We start by filling an array of dates, with each day in the range.
 
-        let startingPoint = Calendar.current.startOfDay(for: inDateRange.lowerBound)                            // We start at the beginning of the first day.
-        let endingPoint = Calendar.current.startOfDay(for: inDateRange.upperBound).addingTimeInterval(86400)    // We stop at the end of the last day.
+        let startingPoint = Calendar.current.startOfDay(for: dataWindowRange.lowerBound)                            // We start at the beginning of the first day.
+        let endingPoint = Calendar.current.startOfDay(for: dataWindowRange.upperBound).addingTimeInterval(86400)    // We stop at the end of the last day.
         
         // We use the calendar to calculate the dates, because it will account for things like DST and leap years.
         Calendar.current.enumerateDates(startingAfter: startingPoint,

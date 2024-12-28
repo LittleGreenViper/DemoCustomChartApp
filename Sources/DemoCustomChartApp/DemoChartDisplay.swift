@@ -39,20 +39,6 @@ struct DemoChartDisplay: View {
     
     /* ##################################################### */
     /**
-     (Computed Property) The date range of our complete list of values.
-     
-     If not able to compute, nil is returned.
-     */
-    var totalDateRange: ClosedRange<Date>? {
-        guard let lowerBound = data.rows.first?.sampleDate,
-              let upperBound = data.rows.last?.sampleDate
-        else { return nil }
-        
-        return Calendar.current.startOfDay(for: lowerBound) ... Calendar.current.startOfDay(for: upperBound)
-    }
-    
-    /* ##################################################### */
-    /**
      (Computed Property) The main chart view. It is a simple bar chart, with each bar, segregated vertically, by user type.
      */
     var body: some View {
@@ -76,7 +62,8 @@ struct DemoChartDisplay: View {
                 data.legend[1].description: data.legend[1].color
             ]
         )
-        // This is covered in more detail in [the SwiftUI documentation](https://developer.apple.com/documentation/charts/customizing-axes-in-swift-charts).
+        // The following adornments are covered in more detail in [the SwiftUI documentation](https://developer.apple.com/documentation/charts/customizing-axes-in-swift-charts).
+        
         // This moves the Y-axis labels over to the leading edge, and displays them, so that their trailing edges are against the chart edge (so they don't overlap the chart).
         // Default, is for the Y-axis to display against the trailing edge, with the values displayed with their leading edge against the chart's trailing edge.
         .chartYAxis {
@@ -88,9 +75,11 @@ struct DemoChartDisplay: View {
                 AxisValueLabel(anchor: .trailing)   // This draws the value for this Y-axis level, as a label. It is set to anchor its trailing edge to the axis tick.
             }
         }
-        // This moves the X-axis labels down, and centers them on the tick marks. It also sets up a range of values to display.
+        
+        // This moves the X-axis labels down, and centers them on the tick marks. It also sets up a range of values to display, and aligns them with the start of the data range.
+        // Default, is for the X-axis to display to the right of the tickmark, and the gridlines seem to radiate from the middle.
         .chartXAxis {
-            AxisMarks(preset: .aligned, position: .bottom, values: DataProvider.xAxisDateValues(for: totalDateRange)) { inValue in  // We use the data provider utility function to give us a bunch of axis steps. We want 6 of them, in this case (default).
+            AxisMarks(preset: .aligned, position: .bottom, values: data.xAxisDateValues()) { inValue in  // We use the data provider utility function to give us a bunch of axis steps. We want 6 of them, in this case (default).
                 if let dateString = inValue.as(Date.self)?.formatted(Date.FormatStyle().month(.abbreviated).day(.twoDigits)) {      // Fetch the date as a formatted string.
                     AxisTick(stroke: StrokeStyle())             // This adds a short "tick" between the value label and the leading edge of the chart. Adding the `stroke` parameter, with a default `StrokeStyle` instance, makes it a solid (as opposed to dashed) line.
                     AxisGridLine()                              // This draws a gridline, vertically down the chart, from the top of the chart, to the bottom. Default is a thin, dashed line.
