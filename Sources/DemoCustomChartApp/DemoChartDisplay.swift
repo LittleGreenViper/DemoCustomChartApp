@@ -55,6 +55,7 @@ struct DemoChartDisplay: View {
                 .foregroundStyle(inUserType.color)
             }
         }
+        
         // This displays the "legend," under the chart, indicating what color indicates what user type.
         .chartForegroundStyleScale(
             [
