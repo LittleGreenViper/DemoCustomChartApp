@@ -38,11 +38,11 @@ public struct DataProvider {
      This is a representation of users registered with an app.
      
      - LEGEND (All values are positive Int):
-         - sample_date: The date this sample was taken, as a Unix Epoch Time (seconds since 1970-01-01 00:00:00)
-         - total_users: The total number of registered users
-         - new_users: The number of users (included in `total_users`) that are "new" (have not completed their first sign-in).
+     - sample_date: The date this sample was taken, as a Unix Epoch Time (seconds since 1970-01-01 00:00:00)
+     - total_users: The total number of registered users
+     - new_users: The number of users (included in `total_users`) that are "new" (have not completed their first sign-in).
      */
-   private static let _dummyChartDataCSV = """
+    private static let _dummyChartDataCSV = """
 sample_date,total_users,new_users
 1729008013,660,47
 1729094406,667,53
@@ -118,7 +118,7 @@ sample_date,total_users,new_users
 """
     
     // MARK: - Public API -
-
+    
     /* ##################################################### */
     /**
      One element of the legend. A simple tuple.
@@ -127,7 +127,7 @@ sample_date,total_users,new_users
      - parameter color: The color to assign to that legend element.
      */
     public typealias LegendElement = (description: String, color: Color)
-
+    
     /* ##################################################### */
     // MARK: One Row Of Data
     /* ##################################################### */
@@ -271,7 +271,7 @@ sample_date,total_users,new_users
         fileprivate init(dataRow inDataRow: DataFrame.Row) {
             _dataRow = inDataRow
         }
-    
+        
         // MARK: Public API
         
         /* ################################################# */
@@ -324,7 +324,7 @@ sample_date,total_users,new_users
         
         rows = convertCSVData()?.rows.map { Row(dataRow: $0) } ?? []
     }
-   
+    
     /* ##################################################### */
     /**
      (Stored Property) This provides the data frame rows as an array of our own ``Row`` struct.
@@ -345,7 +345,12 @@ sample_date,total_users,new_users
              color: Row.PlottableUserTypes._UserTypes.newUsers(numberOfNewUsers: 0).color)
         ]
     }
-    
+}
+
+/* ######################################################### */
+// MARK: Utility Functions
+/* ######################################################### */
+public extension DataProvider {
     /* ##################################################### */
     /**
      This is a utility function, for extracting discrete date steps from a date range. The step size will always be 1 day, and the returned dates will always be at 12:00:00 (Noon).
@@ -355,7 +360,7 @@ sample_date,total_users,new_users
      
      - returns: An array of `Date` instances, each representing one day. Each date will be at noon. There will be a maximum of inNumberOfValues dates, but there could be less.
      */
-    public static func xAxisDateValues(numberOfValues inNumberOfValues: Int = 6, for inDateRange: ClosedRange<Date>?) -> [Date] {
+    static func xAxisDateValues(numberOfValues inNumberOfValues: Int = 6, for inDateRange: ClosedRange<Date>?) -> [Date] {
         guard 0 < inNumberOfValues,
               let inDateRange = inDateRange,
               !inDateRange.isEmpty,
