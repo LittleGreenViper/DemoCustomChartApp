@@ -28,7 +28,7 @@ Much of the code is in a subdirectory, labeled [`Sources/DemoCustomChartApp/Stru
 
 They consist of:
 
-- [`Sources/DemoCustomChartApp/Structure/ChartData.swift`](https://github.com/LittleGreenViper/DemoCustomChartApp/tree/master/Sources/DemoCustomChartApp/Structure/ChartData.swift)
+- [`Sources/DemoCustomChartApp/Structure/DataProvider.swift`](https://github.com/LittleGreenViper/DemoCustomChartApp/blob/master/Sources/DemoCustomChartApp/Structure/DataProvider.swift)
     This is the data provider for the chart data. It is a simple struct that converts some CSV data into a form that can be easily fed to the chart (plottable data).
     
 - [`Sources/DemoCustomChartApp/Structure/ContainerApp.swift`](https://github.com/LittleGreenViper/DemoCustomChartApp/tree/master/Sources/DemoCustomChartApp/Structure/ContainerApp.swift)
