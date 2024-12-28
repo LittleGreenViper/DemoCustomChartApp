@@ -269,6 +269,12 @@ sample_date,total_users,new_users
          (Computed Property) The total number of "active" users (users that have logged in, at least once).
          */
         private var _activeUsers: Int { _totalUsers - _newUsers }
+        
+        /* ################################################# */
+        /**
+         (File private Computed Property) The total number of users (both types).
+         */
+        fileprivate var _rowTotalUsers: Int { _totalUsers }
 
         /* ################################################# */
         /**
@@ -293,7 +299,7 @@ sample_date,total_users,new_users
          (Computed Property) The date the sample was taken. `.distantFuture` is returned, if there is an error.
          */
         public var sampleDate: Date { _dataRow["sample_date"] as? Date ?? .distantFuture }
-        
+
         /* ################################################# */
         /**
          (Computed Property) This returns the row data in one set of plottable data points.
@@ -388,13 +394,12 @@ sample_date,total_users,new_users
      
      The order of elements is first -> left (active users), last -> right (new users).
      */
-    public var legend: [LegendElement] {
-        [
-            (description: Row.PlottableUserTypes._UserTypes.activeUsers(numberOfActiveUsers: 0).description,
-             color: Row.PlottableUserTypes._UserTypes.activeUsers(numberOfActiveUsers: 0).color),
-            (description: Row.PlottableUserTypes._UserTypes.newUsers(numberOfNewUsers: 0).description,
-             color: Row.PlottableUserTypes._UserTypes.newUsers(numberOfNewUsers: 0).color)
-        ]
+    public var legend: KeyValuePairs<String, Color> {
+        KeyValuePairs<String, Color>(dictionaryLiteral: (description: Row.PlottableUserTypes._UserTypes.activeUsers(numberOfActiveUsers: 0).description,
+                                                         color: Row.PlottableUserTypes._UserTypes.activeUsers(numberOfActiveUsers: 0).color),
+                                                        (description: Row.PlottableUserTypes._UserTypes.newUsers(numberOfNewUsers: 0).description,
+                                                         color: Row.PlottableUserTypes._UserTypes.newUsers(numberOfNewUsers: 0).color)
+        )
     }
 }
 
@@ -404,11 +409,43 @@ sample_date,total_users,new_users
 public extension DataProvider {
     /* ##################################################### */
     /**
+     This is a utility function, for extracting discrete date steps from a user maximum value range. It will "pad" the gridlines to round numbers, depending on the level of the maximum value.
+     
+     The result will ensure that we have a top value, and a bottom value, with discrete, padded steps, in between.
+     
+     - parameter numberOfValues: This is an optional (default is 4) integer, with the number of gridline steps we want. This is an arbitrary number, and will be used to determine the number of counts, between steps.
+     
+     - returns: An array of `Int`s, each representing one step in the Y-array values. There will be a maximum of `numberOfValues` steps, but there could be less.
+     */
+    func yAxisCountValues(numberOfValues inNumberOfValues: Int = 4) -> [Int] {
+        let maxUsers = rows.reduce(0) { max($0, $1._rowTotalUsers) }
+        guard 0 < inNumberOfValues,
+              0 < maxUsers
+        else { return [] }
+        
+        let divisor = 500 < maxUsers ? 50 : 100 < maxUsers ? 10 : 50 < maxUsers ? 5 : 1 // This will be used for the "round up" operation.
+        
+        let stepSizeStart = Int(ceil(Double(maxUsers) / Double(inNumberOfValues - 1)))  // We start, by getting the maximum step size necessary to reach the maximum users.
+        
+        let stepSize = ((stepSizeStart / divisor) + 1) * divisor    // We then, pad that, so we get nice, even numbers.
+        
+        let finalValue = inNumberOfValues * stepSize    // The maximum value, if we go all the way.
+        
+        var ret = [Int]()
+        for value in stride(from: 0, to: finalValue, by: stepSize) {
+            ret.append(value)
+        }
+        
+        return ret
+    }
+    
+    /* ##################################################### */
+    /**
      This is a utility function, for extracting discrete date steps from a date range. The step size will always be 1 day, and the returned dates will always be at 12:00:00 (Noon).
      
      - parameter numberOfValues: This is an optional (default is 6) integer, with the number of date steps we want. This is an arbitrary number, and will be used to determine the number of full days, between steps, but is not days, in itself.
      
-     - returns: An array of `Date` instances, each representing one day. Each date will be at noon. There will be a maximum of inNumberOfValues dates, but there could be less.
+     - returns: An array of `Date` instances, each representing one day. Each date will be at noon. There will be a maximum of `numberOfValues` dates, but there could be less.
      */
     func xAxisDateValues(numberOfValues inNumberOfValues: Int = 6) -> [Date] {
         guard 0 < inNumberOfValues,
