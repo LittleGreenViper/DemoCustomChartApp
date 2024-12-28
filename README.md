@@ -236,3 +236,5 @@ We already know that the date range is from October 15, 2024, through December 2
 What we would probably prefer to see, is October 15, October 29, November 12, November 26, December 10, and December 24. The gaps are still 2 weeks apart, but the endpoints fit our date range.
 
 Fortunately, we can do that.
+
+I have written a utility function (``DataProvider.xAxisDateValues(numberOfValues:,for:)``), in the ``DataProvider`` struct, 
