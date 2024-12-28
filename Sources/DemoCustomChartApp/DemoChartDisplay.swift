@@ -62,6 +62,7 @@ struct DemoChartDisplay: View {
                 data.legend[1].description: data.legend[1].color
             ]
         )
+        
         // The following adornments are covered in more detail in [the SwiftUI documentation](https://developer.apple.com/documentation/charts/customizing-axes-in-swift-charts).
         
         // This moves the Y-axis labels over to the leading edge, and displays them, so that their trailing edges are against the chart edge (so they don't overlap the chart).
