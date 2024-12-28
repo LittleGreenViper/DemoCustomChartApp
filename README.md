@@ -173,11 +173,42 @@ We'll start, by adding a `chartXAxis` struct, with the same basic components tha
 #### Listing 3. The X-Axis Adornment
 
 ```swift
-.chartXAxis {
-    AxisMarks(preset: .aligned, position: .bottom) { _ in
-        AxisTick(stroke: StrokeStyle())
-        AxisGridLine()
-        AxisValueLabel(anchor: .top)
+import SwiftUI
+import Charts
+
+struct DemoChartDisplay: View {
+    @State var data = DataProvider()
+
+    var body: some View {
+        Chart(data.rows) { inRow in
+            ForEach(inRow.userTypes) { inUserType in
+                BarMark(
+                    x: .value("Date", inRow.sampleDate, unit: .day),
+                    y: .value(inUserType.description, inUserType.value)
+                )
+                .foregroundStyle(inUserType.color)
+            }
+        }
+        .chartForegroundStyleScale(
+            [
+                data.legend[0].description: data.legend[0].color,
+                data.legend[1].description: data.legend[1].color
+            ]
+        )
+        .chartYAxis {
+            AxisMarks(preset: .aligned, position: .leading) { _ in
+                AxisTick()
+                AxisGridLine()
+                AxisValueLabel(anchor: .trailing)
+            }
+        }
+        .chartXAxis {
+            AxisMarks(preset: .aligned, position: .bottom) { _ in
+                AxisTick(stroke: StrokeStyle())
+                AxisGridLine()
+                AxisValueLabel(anchor: .top)
+            }
+        }
     }
 }
 ```

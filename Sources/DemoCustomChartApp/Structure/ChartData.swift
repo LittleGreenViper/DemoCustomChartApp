@@ -345,4 +345,45 @@ sample_date,total_users,new_users
              color: Row.PlottableUserTypes._UserTypes.newUsers(numberOfNewUsers: 0).color)
         ]
     }
+    
+    /* ##################################################### */
+    /**
+     This is a utility function, for extracting discrete date steps from a date range. The step size will always be 1 day, and the returned dates will always be at 12:00:00 (Noon).
+     
+     - parameter numberOfValues: This is an optional (default is 6) integer, with the number of date steps we want. This is an arbitrary number, and will be used to determine the number of full days, between steps, but is not days, in itself.
+     - parameter for: The closed date range we want. The returned dates will be the start of day for the first date in the range, up to the end of day for the last date (may not include the last date, if the days can't be evenly divided).
+     
+     - returns: An array of `Date` instances, each representing one day. Each date will be at noon. There will be a maximum of inNumberOfValues dates, but there could be less.
+     */
+    public static func xAxisDateValues(numberOfValues inNumberOfValues: Int = 6, for inDateRange: ClosedRange<Date>?) -> [Date] {
+        guard 0 < inNumberOfValues,
+              let inDateRange = inDateRange,
+              !inDateRange.isEmpty,
+              let numberOfDays = Calendar.current.dateComponents([.day], from: inDateRange.lowerBound, to: inDateRange.upperBound).day,
+              0 < numberOfDays
+        else { return [] }
+        
+        var dates = [Date]()    // We start by filling an array of dates, with each day in the range.
+
+        // We use the calendar to calculate the dates, because it will account for things like DST and leap years.
+        Calendar.current.enumerateDates(startingAfter: inDateRange.lowerBound.addingTimeInterval(-86399),   // We start the day before.
+                                        matching: DateComponents(hour: 0, minute: 0, second:0),
+                                        matchingPolicy: .nextTime) { (date, _, stop) in
+            guard let date = date,
+                  date < inDateRange.upperBound.addingTimeInterval(86400)  // We stop at the end of the last day.
+            else {
+                stop = true // This causes the iteration to stop.
+                return
+            }
+
+            dates.append(Calendar.current.startOfDay(for: date).addingTimeInterval(43200))    // We return noon, of each day. This ensures the bars center.
+        }
+        
+        // At this point, we have an array with consecutive dates; each, representing a single day, and at noon of that day.
+        // We now filter out just the ones we want, to satisfy the count request.
+        var ret = [Date]()
+        let strideCount = numberOfDays / (inNumberOfValues - 1)
+        for index in stride(from: 0, to: dates.count, by: strideCount) { ret.append(dates[index]) }
+        return ret
+    }
 }
