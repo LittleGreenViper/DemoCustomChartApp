@@ -425,9 +425,9 @@ public extension DataProvider {
 public extension DataProvider {
     /* ##################################################### */
     /**
-     This is a utility function, for extracting discrete date steps from a user maximum value range. It will "pad" the gridlines to round numbers, depending on the level of the maximum value.
+     This is a utility function, for extracting discrete user count steps from a user maximum value range. It will "pad" the gridlines to round numbers, depending on the level of the maximum value.
      
-     The result will ensure that we have a top value, and a bottom value, with discrete, padded steps, in between.
+     The result will ensure that we have a top value, and a bottom value, with discrete, padded steps, in nice, round numbers, in between.
      
      - parameter numberOfValues: This is an optional (default is 4) integer, with the number of gridline steps we want. This is an arbitrary number, and will be used to determine the number of counts, between steps.
      
