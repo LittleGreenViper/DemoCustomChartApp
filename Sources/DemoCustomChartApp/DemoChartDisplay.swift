@@ -43,6 +43,7 @@ struct DemoChartDisplay: View {
      */
     var body: some View {
         // MARK: - PART 0 - The Chart, Itself -
+     
         // This builds bars. The date determines the X-axis, and the Y-axis has the number of each type of user, stacked.
         Chart(data.windowedRows) { inRow in // Note that we use the `windowedRows` computed property. This comes into play, when we implement pinch-to-zoom.
             // Each bar is comprised of two sections, which are built, here. `userTypes` returns an array of `UserType` enum instances.
