@@ -313,6 +313,12 @@ sample_date,total_users,new_users
             ]
         }
     }
+    
+    /* ##################################################### */
+    /**
+     (Stored Property) This provides the data frame rows as an array of our own ``Row`` struct.
+     */
+    public let rows: [Row]
 
     /* ##################################################### */
     /**
@@ -323,7 +329,7 @@ sample_date,total_users,new_users
     public init() {
         /* ################################################# */
         /**
-         Converts the dummy CSV data to a ``DataFrame``. Nil, if there was an error.
+         Converts the dummy CSV data to a `DataFrame`. Nil, if there was an error.
          */
         func convertCSVData() -> DataFrame? {
             if let data = Self._dummyChartDataCSV.data(using: .utf8),
@@ -343,13 +349,18 @@ sample_date,total_users,new_users
             _dataWindowRange = Calendar.current.startOfDay(for: lowerBound) ... Calendar.current.startOfDay(for: upperBound)
         }
     }
-    
+}
+
+/* ######################################################### */
+// MARK: Computed Properties
+/* ######################################################### */
+public extension DataProvider {
     /* ##################################################### */
     /**
-     (Stored Property) This provides the data frame rows as an array of our own ``Row`` struct.
+     (Computed Property) This provides the data frame rows as an array of our own ``Row`` struct, but filtered for the window date range.
      */
-    public let rows: [Row]
-    
+    var windowedRows: [Row] { rows.filter { dataWindowRange.contains(Calendar.current.startOfDay(for: $0.sampleDate)) } }
+
     /* ##################################################### */
     /**
      (Computed Property) The date range of our complete list of values.
@@ -366,10 +377,9 @@ sample_date,total_users,new_users
     
     /* ################################################# */
     /**
-     (Computed Property) This contains an explicit sub-range of the entire data X-axis range. If in error, an empty range is returned. Default means use the totalDateRange.
-     > NOTE: This is used to specify the displayed range in the chart.
+     (Computed Property) This contains an explicit sub-range of the entire data X-axis range. If in error, an empty range is returned. Default means use ``totalDateRange``.
      */
-    public var dataWindowRange: ClosedRange<Date> {
+    var dataWindowRange: ClosedRange<Date> {
         get {
             guard !_dataWindowRange.isEmpty,
                   !totalDateRange.isEmpty
@@ -394,13 +404,19 @@ sample_date,total_users,new_users
      
      The order of elements is first -> left (active users), last -> right (new users).
      */
-    public var legend: KeyValuePairs<String, Color> {
+    var legend: KeyValuePairs<String, Color> {
         KeyValuePairs<String, Color>(dictionaryLiteral: (description: Row.PlottableUserTypes._UserTypes.activeUsers(numberOfActiveUsers: 0).description,
                                                          color: Row.PlottableUserTypes._UserTypes.activeUsers(numberOfActiveUsers: 0).color),
                                                         (description: Row.PlottableUserTypes._UserTypes.newUsers(numberOfNewUsers: 0).description,
                                                          color: Row.PlottableUserTypes._UserTypes.newUsers(numberOfNewUsers: 0).color)
         )
     }
+    
+    /* ##################################################### */
+    /**
+     (Computed Property) This is the maximum of users.
+     */
+    var maxUsers: Int { rows.reduce(0) { max($0, $1._rowTotalUsers) } }
 }
 
 /* ######################################################### */
@@ -418,12 +434,12 @@ public extension DataProvider {
      - returns: An array of `Int`s, each representing one step in the Y-array values. There will be a maximum of `numberOfValues` steps, but there could be less.
      */
     func yAxisCountValues(numberOfValues inNumberOfValues: Int = 4) -> [Int] {
-        let maxUsers = rows.reduce(0) { max($0, $1._rowTotalUsers) }
-        guard 0 < inNumberOfValues,
+        guard 1 < inNumberOfValues,
               0 < maxUsers
         else { return [] }
         
-        let divisor = 500 < maxUsers ? 50 : 100 < maxUsers ? 10 : 50 < maxUsers ? 5 : 1 // This will be used for the "round up" operation.
+        // This will be used for the "round up" operation. Crude, but sufficient for our needs.
+        let divisor = 100
         
         let stepSizeStart = Int(ceil(Double(maxUsers) / Double(inNumberOfValues - 1)))  // We start, by getting the maximum step size necessary to reach the maximum users.
         
@@ -432,9 +448,8 @@ public extension DataProvider {
         let finalValue = inNumberOfValues * stepSize    // The maximum value, if we go all the way.
         
         var ret = [Int]()
-        for value in stride(from: 0, to: finalValue, by: stepSize) {
-            ret.append(value)
-        }
+        
+        for value in stride(from: 0, to: finalValue, by: stepSize) { ret.append(value) }
         
         return ret
     }
@@ -448,10 +463,10 @@ public extension DataProvider {
      - returns: An array of `Date` instances, each representing one day. Each date will be at noon. There will be a maximum of `numberOfValues` dates, but there could be less.
      */
     func xAxisDateValues(numberOfValues inNumberOfValues: Int = 6) -> [Date] {
-        guard 0 < inNumberOfValues,
+        guard 1 < inNumberOfValues,
               !dataWindowRange.isEmpty,
               let numberOfDays = Calendar.current.dateComponents([.day], from: dataWindowRange.lowerBound, to: dataWindowRange.upperBound).day,
-              1 < numberOfDays
+              0 < numberOfDays
         else { return [] }
         
         var dates = [Date]()    // We start by filling an array of dates, with each day in the range.

@@ -42,14 +42,15 @@ struct DemoChartDisplay: View {
      (Computed Property) The main chart view. It is a simple bar chart, with each bar, segregated vertically, by user type.
      */
     var body: some View {
+        // MARK: - PART 0 - The Chart, Itself -
         // This builds bars. The date determines the X-axis, and the Y-axis has the number of each type of user, stacked.
-        Chart(data.rows) { inRow in
+        Chart(data.windowedRows) { inRow in // Note that we use the `windowedRows` computed property. This comes into play, when we implement pinch-to-zoom.
             // Each bar is comprised of two sections, which are built, here. `userTypes` returns an array of `UserType` enum instances.
             // The order of the components in the array determines which will be above the other. Previous is under next.
             ForEach(inRow.userTypes) { inUserType in
                 BarMark(
                     x: .value("Date", inRow.sampleDate, unit: .day),    // The date is the same, for each component. Each bar represents one day.
-                    y: .value(inUserType.description, inUserType.value)
+                    y: .value(inUserType.description, inUserType.value) // The components "stack," with subsequent ones being placed above previous ones.
                 )
                 // Each bar component gets a color, assigned by the enum.
                 .foregroundStyle(inUserType.color)
@@ -70,25 +71,27 @@ struct DemoChartDisplay: View {
         .chartYAxis {
             // This cycles through all of the value labels on the Y-axis, giving each level of the Y-axis a chance to strut its stuff.
             // The closure parameter is an instance of [`AxisValue`](https://developer.apple.com/documentation/charts/axisvalue), representing the Y-axis value. We ignore this.
-            AxisMarks(preset: .aligned, position: .leading, values: data.yAxisCountValues()) { _ in
-                AxisTick()                          // This adds a short "tick" between the value label and the leading edge of the chart. Default is about 4 display units, solid thin line.
+            AxisMarks(preset: .aligned, position: .leading, values: data.yAxisCountValues()) { _ in  // We use the data provider utility function to give us a bunch of axis steps. We want 4 of them, in this case (default). This also fixes the scale, for pinch-to-zoom.
                 AxisGridLine()                      // This draws a gridline, horizontally across the chart, from the leading edge of the chart, to the trailing edge. Default is a solid thin line.
+                AxisTick()                          // This adds a short "tick" between the value label and the leading edge of the chart. Default is about 4 display units, solid thin line.
                 AxisValueLabel(anchor: .trailing)   // This draws the value for this Y-axis level, as a label. It is set to anchor its trailing edge to the axis tick.
             }
         }
-        
+        .chartYAxisLabel("Users")   // This displays the axis title, above the upper, left corner of the chart, over the Y-axis labels.
+
         // MARK: - PART 3 - X-Axis Customization -
 
         // This moves the X-axis labels down, and centers them on the tick marks. It also sets up a range of values to display, and aligns them with the start of the data range.
         // Default, is for the X-axis to display to the right of the tickmark, and the gridlines seem to radiate from the middle.
         .chartXAxis {
-            AxisMarks(preset: .aligned, position: .bottom, values: data.xAxisDateValues()) { inValue in  // We use the data provider utility function to give us a bunch of axis steps. We want 6 of them, in this case (default).
-                if let dateString = inValue.as(Date.self)?.formatted(Date.FormatStyle().month(.abbreviated).day(.twoDigits)) {      // Fetch the date as a formatted string.
-                    AxisTick(stroke: StrokeStyle())             // This adds a short "tick" between the value label and the leading edge of the chart. Adding the `stroke` parameter, with a default `StrokeStyle` instance, makes it a solid (as opposed to dashed) line.
+            AxisMarks(preset: .aligned, position: .bottom, values: data.xAxisDateValues()) { inValue in  // We use the data provider utility function to give us a bunch of axis steps. We want 6 of them, in this case (default). It also tells the chart what domain to use.
+                if let dateString = inValue.as(Date.self)?.formatted(Date.FormatStyle().month(.abbreviated).day(.twoDigits)) {  // Fetch the date as a formatted string.
                     AxisGridLine()                              // This draws a gridline, vertically down the chart, from the top of the chart, to the bottom. Default is a thin, dashed line.
+                    AxisTick(stroke: StrokeStyle())             // This adds a short "tick" between the value label and the leading edge of the chart. Adding the `stroke` parameter, with a default `StrokeStyle` instance, makes it a solid (as opposed to dashed) line.
                     AxisValueLabel(dateString, anchor: .top)    // This draws the value for this X-axis date, as a label. It is set to anchor its top to the axis tick.
                 }
             }
         }
+        .chartXAxisLabel("Date", alignment: .center)    // This displays the axis title, under the center of the X-axis, under its labels.
     }
 }
