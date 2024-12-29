@@ -34,6 +34,8 @@ struct DemoChartDisplay: View {
     /* ##################################################### */
     /**
      (Stored Property) This is the actual data that we'll be providing to the chart.
+     
+     It's somewhat mutable (we can set observational state, like marking rows as selected, or setting a "window" of dates to examine).
      */
     @State var data = DataProvider()
     
@@ -57,7 +59,7 @@ struct DemoChartDisplay: View {
                 .foregroundStyle(inUserType.color)
             }
         }
-        
+
         // MARK: - PART 1 - Chart Legend -
         
         // This displays the "legend," under the chart, indicating what color indicates what user type.
@@ -78,7 +80,7 @@ struct DemoChartDisplay: View {
                 AxisValueLabel(anchor: .trailing)   // This draws the value for this Y-axis level, as a label. It is set to anchor its trailing edge to the axis tick.
             }
         }
-        .chartYAxisLabel("Users")   // This displays the axis title, above the upper, left corner of the chart, over the Y-axis labels.
+        .chartYAxisLabel("Users")                   // This displays the axis title, above the upper, left corner of the chart, over the Y-axis labels.
 
         // MARK: - PART 3 - X-Axis Customization -
 
@@ -93,6 +95,6 @@ struct DemoChartDisplay: View {
                 }
             }
         }
-        .chartXAxisLabel("Date", alignment: .center)    // This displays the axis title, under the center of the X-axis, under its labels.
+        .chartXAxisLabel("Date", alignment: .center)            // This displays the axis title, under the center of the X-axis, under its labels.
     }
 }

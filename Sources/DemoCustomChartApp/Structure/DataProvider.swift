@@ -142,7 +142,7 @@ sample_date,total_users,new_users
     /**
      This interprets the untyped DataFrame Row data into data that we find useful.
      */
-    public struct Row: Identifiable {
+    public struct Row: Identifiable, Equatable {
         /* ################################################# */
         // MARK: Plottable User Type Data Struct
         /* ################################################# */
@@ -161,13 +161,13 @@ sample_date,total_users,new_users
                 /**
                  The total number of "new" users (users that have never logged in).
                  */
-                case newUsers(numberOfNewUsers: Int)
+                case newUsers(isSelected: Bool, numberOfNewUsers: Int)
                 
                 /* ######################################### */
                 /**
                  The total number of "active" users (users that have logged in, at least once).
                  */
-                case activeUsers(numberOfActiveUsers: Int)
+                case activeUsers(isSelected: Bool, numberOfActiveUsers: Int)
                 
                 /* ######################################### */
                 /**
@@ -201,10 +201,23 @@ sample_date,total_users,new_users
                  */
                 var value: Int {
                     switch self {
-                    case let .activeUsers(inUsers):
+                    case let .activeUsers(_, inUsers):
                         return inUsers
-                    case let .newUsers(inUsers):
+                    case let .newUsers(_, inUsers):
                         return inUsers
+                    }
+                }
+                
+                /* ######################################### */
+                /**
+                 (Computed Property) Returns true, if the row is currently selected.
+                 */
+                var isSelected: Bool {
+                    switch self {
+                    case let .activeUsers(inIsSelected, _):
+                        return inIsSelected
+                    case let .newUsers(inIsSelected, _):
+                        return inIsSelected
                     }
                 }
             }
@@ -221,10 +234,28 @@ sample_date,total_users,new_users
             
             /* ############################################# */
             /**
+             (Static) The text to use, for a selected row.
+             */
+            public static let selectedDescription: String = "Selected"
+            
+            /* ############################################# */
+            /**
+             (Static) The color to use, for a selected row.
+             */
+            public static let selectedColor: Color = .red
+
+            /* ############################################# */
+            /**
              (Stored Property) Make me identifiable.
              */
             public let id = UUID()
-            
+
+            /* ############################################# */
+            /**
+             (Computed Property) True, if this row is selected.
+             */
+            public var isSelected: Bool { _userType.isSelected }
+
             /* ######################################### */
             /**
              (Computed Property) Returns a string we can use for UI. This must be unique (`Hashable`).
@@ -233,9 +264,9 @@ sample_date,total_users,new_users
             
             /* ######################################### */
             /**
-             (Computed Property) Returns a color to use for The bar element.
+             (Computed Property) Returns a color to use for The bar element. If selected, then we return red.
              */
-            var color: Color { _userType.color }
+            var color: Color { isSelected ? Self.selectedColor : _userType.color }
             
             /* ######################################### */
             /**
@@ -285,7 +316,7 @@ sample_date,total_users,new_users
         fileprivate init(dataRow inDataRow: DataFrame.Row) {
             _dataRow = inDataRow
         }
-        
+
         // MARK: Public API
         
         /* ################################################# */
@@ -293,7 +324,13 @@ sample_date,total_users,new_users
          (Stored Property) Make me identifiable.
          */
         public let id = UUID()
-        
+
+        /* ############################################# */
+        /**
+         (Stored Property) True, if this row is selected.
+         */
+        public var isSelected = false
+
         /* ################################################# */
         /**
          (Computed Property) The date the sample was taken. `.distantFuture` is returned, if there is an error.
@@ -308,17 +345,26 @@ sample_date,total_users,new_users
          */
         public var userTypes: [PlottableUserTypes] {
             [
-                PlottableUserTypes(_userType: .activeUsers(numberOfActiveUsers: _activeUsers)),
-                PlottableUserTypes(_userType: .newUsers(numberOfNewUsers: _newUsers))
+                PlottableUserTypes(_userType: .activeUsers(isSelected: isSelected, numberOfActiveUsers: _activeUsers)),
+                PlottableUserTypes(_userType: .newUsers(isSelected: isSelected, numberOfNewUsers: _newUsers))
             ]
         }
+        
+        /* ################################################# */
+        /**
+         Equatable Conformance. We base this on the sample date.
+         
+         - parameter lhs: The left-hand side of the comparison.
+         - parameter rhs: The right-hand side of the comparison.
+         */
+        public static func == (lhs: Row, rhs: Row) -> Bool { lhs.sampleDate == rhs.sampleDate }
     }
     
     /* ##################################################### */
     /**
      (Stored Property) This provides the data frame rows as an array of our own ``Row`` struct.
      */
-    public let rows: [Row]
+    public var rows: [Row]
 
     /* ##################################################### */
     /**
@@ -360,6 +406,14 @@ public extension DataProvider {
      (Computed Property) This provides the data frame rows as an array of our own ``Row`` struct, but filtered for the window date range.
      */
     var windowedRows: [Row] { rows.filter { dataWindowRange.contains(Calendar.current.startOfDay(for: $0.sampleDate)) } }
+    
+    /* ##################################################### */
+    /**
+     (Computed Property) This provides a row that is currently selected. Nil, if no row selected.
+     
+     > NOTE: This may return rows not in the window.
+     */
+    var selectedRow: Row? { rows.first(where: { $0.isSelected }) }
 
     /* ##################################################### */
     /**
@@ -405,10 +459,12 @@ public extension DataProvider {
      The order of elements is first -> left (active users), last -> right (new users).
      */
     var legend: KeyValuePairs<String, Color> {
-        KeyValuePairs<String, Color>(dictionaryLiteral: (description: Row.PlottableUserTypes._UserTypes.activeUsers(numberOfActiveUsers: 0).description,
-                                                         color: Row.PlottableUserTypes._UserTypes.activeUsers(numberOfActiveUsers: 0).color),
-                                                        (description: Row.PlottableUserTypes._UserTypes.newUsers(numberOfNewUsers: 0).description,
-                                                         color: Row.PlottableUserTypes._UserTypes.newUsers(numberOfNewUsers: 0).color)
+        KeyValuePairs<String, Color>(dictionaryLiteral: (description: Row.PlottableUserTypes._UserTypes.activeUsers(isSelected: false, numberOfActiveUsers: 0).description,
+                                                         color: Row.PlottableUserTypes._UserTypes.activeUsers(isSelected: false, numberOfActiveUsers: 0).color),
+                                                        (description: Row.PlottableUserTypes._UserTypes.newUsers(isSelected: false, numberOfNewUsers: 0).description,
+                                                         color: Row.PlottableUserTypes._UserTypes.newUsers(isSelected: false, numberOfNewUsers: 0).color),
+                                                        (description: Row.PlottableUserTypes.selectedDescription,
+                                                         color: Row.PlottableUserTypes.selectedColor)
         )
     }
     
@@ -494,5 +550,52 @@ public extension DataProvider {
         let strideCount = numberOfDays / (inNumberOfValues - 1) // Subtract one, because it's an inclusive total.
         for index in stride(from: 0, to: dates.count, by: strideCount) { ret.append(dates[index]) }
         return ret
+    }
+}
+
+/* ######################################################### */
+// MARK: Mutating Utility Functions
+/* ######################################################### */
+public extension DataProvider {
+    /* ##################################################### */
+    /**
+     (Mutating Function) This will allow you to set the selection of a row, at the given index.
+     
+     > NOTE: The index is in terms of ``totalDateRange``.
+     
+     - parameter inIndex: The 0-based index (in terms of ``totalDateRange``) of the row to be affected.
+     - parameter isSelected: Optional (default is true) state for the new selection (set to false, to deselect a row).
+     
+     - returns: The previous state of the row.
+     */
+    @discardableResult
+    mutating func selectRow(_ inIndex: Int, isSelected inIsSelected: Bool = true) -> Bool {
+        precondition((0..<rows.count).contains(inIndex), "Index out of bounds")
+        
+        let ret = rows[inIndex].isSelected
+        
+        // If we are selecting a row, we make sure to deselect all others. As Connor MacLeod would say, "There can only be one."
+        if inIsSelected {
+            for row in rows.enumerated() { rows[row.offset].isSelected = false }
+        }
+        
+        rows[inIndex].isSelected = inIsSelected
+        
+        return ret
+    }
+    
+    /* ##################################################### */
+    /**
+     (Mutating Function) This will allow you to set the selection of a a row, given a copy of the row.
+     
+     - parameter inRow: The row to be selected.
+     - parameter isSelected: Optional (default is true) state for the new selection (set to false, to deselect a row).
+
+     - returns: The previous state of the row.
+     */
+    @discardableResult
+    mutating func selectRow(_ inRow: Row, isSelected inIsSelected: Bool = true) -> Bool {
+        guard let index = rows.firstIndex(where: { $0 == inRow }) else { return false }
+        return selectRow(index, isSelected: inIsSelected)
     }
 }
