@@ -40,3 +40,7 @@ They consist of:
 ### Demonstration Code
 
 The code that we will be working with, is in the main project directory, and is called [`Sources/DemoCustomChartApp/DemoChartDisplay.swift`](https://github.com/LittleGreenViper/DemoCustomChartApp/tree/master/Sources/DemoCustomChartApp/DemoChartDisplay.swift).
+
+### The Blog Series
+
+This repo is meant to accompany [a blog series](https://littlegreenviper.com/series/swiftui-charts-gestures/), describing, in detail, how we will add the gestures to a chart.
