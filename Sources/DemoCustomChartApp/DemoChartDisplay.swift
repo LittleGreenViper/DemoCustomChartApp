@@ -181,16 +181,16 @@ struct DemoChartDisplay: View {
                                     
                                     _firstRange = _firstRange ?? data.dataWindowRange
 
-                                    guard let firstRange = _firstRange else { return }
-                                    
-                                    let rangeInSeconds = (firstRange.upperBound.timeIntervalSinceReferenceDate - firstRange.lowerBound.timeIntervalSinceReferenceDate) / 2
-                                    let centerDateInSeconds = (TimeInterval(inValue.startAnchor.x) * (rangeInSeconds * 2)) + firstRange.lowerBound.timeIntervalSinceReferenceDate
-                                    let centerDate = Calendar.current.startOfDay(for: Date(timeIntervalSinceReferenceDate: centerDateInSeconds)).addingTimeInterval(43200)
-                                    
-                                    // No less than 2 days.
-                                    let newRange = max((86400 * 2), (rangeInSeconds * 1.2) / inValue.magnification)
-                                    
-                                    data.dataWindowRange = (centerDate.addingTimeInterval(-newRange)...centerDate.addingTimeInterval(newRange)).clamped(to: data.totalDateRange)
+                                    if let firstRange = _firstRange {
+                                        let rangeInSeconds = (firstRange.upperBound.timeIntervalSinceReferenceDate - firstRange.lowerBound.timeIntervalSinceReferenceDate) / 2
+                                        let centerDateInSeconds = (TimeInterval(inValue.startAnchor.x) * (rangeInSeconds * 2)) + firstRange.lowerBound.timeIntervalSinceReferenceDate
+                                        let centerDate = Calendar.current.startOfDay(for: Date(timeIntervalSinceReferenceDate: centerDateInSeconds)).addingTimeInterval(43200)
+                                        
+                                        // No less than 2 days.
+                                        let newRange = max((86400 * 2), (rangeInSeconds * 1.2) / inValue.magnification)
+                                        
+                                        data.dataWindowRange = (centerDate.addingTimeInterval(-newRange)...centerDate.addingTimeInterval(newRange)).clamped(to: data.totalDateRange)
+                                    }
                                 }
                                 .onEnded { _ in _firstRange = nil }
                         )
