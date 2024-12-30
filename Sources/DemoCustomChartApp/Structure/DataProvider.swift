@@ -141,8 +141,9 @@ sample_date,total_users,new_users
     /* ##################################################### */
     /**
      This interprets the untyped DataFrame Row data into data that we find useful.
+     > NOTE: This is a class, as opposed to a struct, so it will be referenced.
      */
-    public struct Row: Identifiable, Equatable {
+    public class Row: Identifiable, Equatable {
         /* ################################################# */
         // MARK: Plottable User Type Data Struct
         /* ################################################# */
@@ -574,10 +575,8 @@ public extension DataProvider {
         
         let ret = rows[inIndex].isSelected
         
+        deselectAllRows()
         // If we are selecting a row, we make sure to deselect all others. As Connor MacLeod would say, "There can only be one."
-        if inIsSelected {
-            for row in rows.enumerated() { rows[row.offset].isSelected = false }
-        }
         
         rows[inIndex].isSelected = inIsSelected
         
@@ -598,6 +597,14 @@ public extension DataProvider {
         guard let index = rows.firstIndex(where: { $0 == inRow }) else { return false }
         return selectRow(index, isSelected: inIsSelected)
     }
+    
+    /* ##################################################### */
+    /**
+     (Mutating Function) This removes selection from all rows.
+     */
+    mutating func deselectAllRows() {
+        for row in rows.enumerated() { rows[row.offset].isSelected = false }
+    }
 }
 
 /* ###################################################################################################################################### */
@@ -616,15 +623,11 @@ extension Array where Element == DataProvider.Row {
         var ret: Element?
         
         forEach {
-            let currentDate = $0.sampleDate
-            
-            guard let compDate = ret?.sampleDate
-            else {
+            if let compDate = ret?.sampleDate {
+                ret = abs($0.sampleDate.timeIntervalSince(inDate)) < abs(compDate.timeIntervalSince(inDate)) ? $0 : ret
+            } else {
                 ret = $0
-                return
             }
-            
-            ret = abs(currentDate.timeIntervalSince(inDate)) < abs(compDate.timeIntervalSince(inDate)) ? $0 : ret
         }
         
         return ret
