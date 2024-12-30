@@ -515,27 +515,26 @@ public extension DataProvider {
     /**
      This is a utility function, for extracting discrete date steps from a date range. The step size will always be 1 day, and the returned dates will always be at 12:00:00 (Noon).
      
-     - parameter numberOfValues: This is an optional (default is 6) integer, with the number of date steps we want. This is an arbitrary number, and will be used to determine the number of full days, between steps, but is not days, in itself.
+     - parameter numberOfValues: This is an optional (default is 4) integer, with the number of date steps we want. This is an arbitrary number, and will be used to determine the number of full days, between steps, but is not days, in itself.
      
      - returns: An array of `Date` instances, each representing one day. Each date will be at noon. There will be a maximum of `numberOfValues` dates, but there could be less.
      */
-    func xAxisDateValues(numberOfValues inNumberOfValues: Int = 6) -> [Date] {
+    func xAxisDateValues(numberOfValues inNumberOfValues: Int = 4) -> [Date] {
         guard 1 < inNumberOfValues,
               !dataWindowRange.isEmpty,
-              let numberOfDays = Calendar.current.dateComponents([.day], from: dataWindowRange.lowerBound, to: dataWindowRange.upperBound).day,
+              let numberOfDays = Calendar.current.dateComponents([.day], from: dataWindowRange.lowerBound, to: dataWindowRange.upperBound).day, // Count how many days we have in our range.
               0 < numberOfDays
         else { return [] }
         
-        let requestedNumberOfPoints = min(inNumberOfValues, numberOfDays + 1)
+        let requestedNumberOfPoints = max(1, inNumberOfValues - 1)
         
         var dates = [Date]()    // We start by filling an array of dates, with each day in the range.
 
         let startingPoint = Calendar.current.startOfDay(for: dataWindowRange.lowerBound)                            // We start at the beginning of the first day.
         let endingPoint = Calendar.current.startOfDay(for: dataWindowRange.upperBound).addingTimeInterval(86400)    // We stop at the end of the last day.
-        
         // We use the calendar to calculate the dates, because it will account for things like DST and leap years.
         Calendar.current.enumerateDates(startingAfter: startingPoint,
-                                        matching: DateComponents(hour: 12, minute: 0, second:0),                // We return noon, of each day. This ensures the bars center.
+                                        matching: DateComponents(hour: 12, minute: 0, second:0),    // We return noon, of each day. This ensures the bars center.
                                         matchingPolicy: .nextTime) { inDate, _, inOutStop in
             guard let date = inDate,
                   date < endingPoint
@@ -543,15 +542,24 @@ public extension DataProvider {
                 inOutStop = true    // This causes the iteration to stop.
                 return
             }
-
+            
             dates.append(date)
         }
         
-        // At this point, we have an array with consecutive dates; each, representing a single day, and at noon of that day.
-        // We now filter out just the ones we want, to satisfy the count request.
+        // What we should have now, is an array of dates, representing noon, of each day between the two dates (inclusive).
+        guard let last = dates.last else { return [] }  // Getting the last also tests, to make sure we got something.
+        
+        // We will now build an array of the dates that will be shown in the chart X-axis labels. We should always have the first day, and the last day.
         var ret = [Date]()
-        let strideCount = numberOfDays / (requestedNumberOfPoints - 1) // Subtract one, because it's an inclusive total.
-        for index in stride(from: 0, to: dates.count, by: strideCount) { ret.append(dates[index]) }
+        let divisor = Int(ceil(Double(dates.count) / Double(requestedNumberOfPoints)))
+        for dayCount in 0..<dates.count {
+            if 0 == dayCount % divisor {
+                ret.append(dates[dayCount])
+            }
+        }
+        
+        ret.append(last)
+        
         return ret
     }
 }
