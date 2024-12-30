@@ -177,7 +177,7 @@ struct DemoChartDisplay: View {
                         .gesture(
                             MagnifyGesture()
                                 .onChanged { inValue in
-                                    data.deselectAllRows()
+                                    _selectedValue = nil
                                     
                                     _firstRange = _firstRange ?? data.dataWindowRange
 
