@@ -599,3 +599,34 @@ public extension DataProvider {
         return selectRow(index, isSelected: inIsSelected)
     }
 }
+
+/* ###################################################################################################################################### */
+// MARK: - Array Extension For Arrays of Rows -
+/* ###################################################################################################################################### */
+extension Array where Element == DataProvider.Row {
+    /* ################################################################## */
+    /**
+     This returns the sample closest to the given date.
+     
+     - parameter inDate: The date we want to compare against.
+     
+     - returns: The sample that is closest to (above or below) the given date.
+     */
+    func nearestTo(_ inDate: Date) -> Element? {
+        var ret: Element?
+        
+        forEach {
+            let currentDate = $0.sampleDate
+            
+            guard let compDate = ret?.sampleDate
+            else {
+                ret = $0
+                return
+            }
+            
+            ret = abs(currentDate.timeIntervalSince(inDate)) < abs(compDate.timeIntervalSince(inDate)) ? $0 : ret
+        }
+        
+        return ret
+    }
+}
