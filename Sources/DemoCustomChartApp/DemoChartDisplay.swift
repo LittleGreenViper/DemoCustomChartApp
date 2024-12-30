@@ -33,6 +33,16 @@ import Charts
 struct DemoChartDisplay: View {
     // MARK: Private Properties
     
+    // MARK: - PART 4A - Tap/Swipe to Select (State Properties) -
+
+    /* ################################################################## */
+    /**
+     The string that displays the data for the selected bar.
+     
+     This is attached to the text item that we added for the drag gesture.
+     */
+    @State private var _selectedValuesString: String = " "  // It needs to always be filled with something, so it doesn't vertically collapse (making the chart jump).
+
     /* ################################################################## */
     /**
      The value being selected by the user, while dragging.
@@ -60,14 +70,6 @@ struct DemoChartDisplay: View {
         }
     }
 
-    /* ################################################################## */
-    /**
-     The string that displays the data for the selected bar.
-     
-     This is attached to the text item that we added for the drag gesture.
-     */
-    @State private var _selectedValuesString: String = " "  // It needs to always be filled with something, so it doesn't vertically collapse (making the chart jump).
-
     /* ##################################################### */
     /**
      (Stored Property) This is the actual data that we'll be providing to the chart.
@@ -81,7 +83,7 @@ struct DemoChartDisplay: View {
      (Computed Property) The main chart view. It is a simple bar chart, with each bar, segregated vertically, by user type.
      */
     var body: some View {
-        // MARK: - PART 4A - Tap/Swipe to Select (VStack and Text Item) -
+        // MARK: - PART 4B - Tap/Swipe to Select (VStack and Text Item) -
         
         // We need to add a `VStack`, so that the text item and chart play well together.
         VStack {
@@ -143,7 +145,7 @@ struct DemoChartDisplay: View {
             }
             .chartXAxisLabel("Date", alignment: .center)            // This displays the axis title, under the center of the X-axis, under its labels.
             
-            // MARK: - PART 4B - Tap/Swipe to Select (Drag Gesture) -
+            // MARK: - PART 4C - Tap/Swipe to Select (Drag Gesture) -
             
             // This implements tap/swipe to select.
             // We start, by covering the chart with an overlay.

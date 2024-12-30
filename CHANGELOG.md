@@ -1,4 +1,4 @@
-**01.Drag-To-Select** *December 29, 2024*
+**01.Drag-To-Select** *December 30, 2024*
 
 - We have added the drag/swipe/tap gesture, that selects rows.
 
