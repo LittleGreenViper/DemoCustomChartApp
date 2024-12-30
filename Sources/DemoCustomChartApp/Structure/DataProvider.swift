@@ -526,6 +526,8 @@ public extension DataProvider {
               0 < numberOfDays
         else { return [] }
         
+        let requestedNumberOfPoints = min(inNumberOfValues, numberOfDays + 1)
+        
         var dates = [Date]()    // We start by filling an array of dates, with each day in the range.
 
         let startingPoint = Calendar.current.startOfDay(for: dataWindowRange.lowerBound)                            // We start at the beginning of the first day.
@@ -548,7 +550,7 @@ public extension DataProvider {
         // At this point, we have an array with consecutive dates; each, representing a single day, and at noon of that day.
         // We now filter out just the ones we want, to satisfy the count request.
         var ret = [Date]()
-        let strideCount = numberOfDays / (inNumberOfValues - 1) // Subtract one, because it's an inclusive total.
+        let strideCount = numberOfDays / (requestedNumberOfPoints - 1) // Subtract one, because it's an inclusive total.
         for index in stride(from: 0, to: dates.count, by: strideCount) { ret.append(dates[index]) }
         return ret
     }
