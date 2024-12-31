@@ -496,7 +496,9 @@ public extension DataProvider {
         else { return [] }
         
         // This will be used for the "round up" operation. Crude, but sufficient for our needs.
-        let divisor = 100
+        let divisors = [4, 8, 20, 100, 200, 400]
+        let topDivisorIndex = divisors.last(where: { $0 < maxUsers }) ?? 0
+        let divisor = topDivisorIndex / 4
         
         let stepSizeStart = Int(ceil(Double(maxUsers) / Double(inNumberOfValues - 1)))  // We start, by getting the maximum step size necessary to reach the maximum users.
         
@@ -532,6 +534,7 @@ public extension DataProvider {
 
         let startingPoint = Calendar.current.startOfDay(for: dataWindowRange.lowerBound)                            // We start at the beginning of the first day.
         let endingPoint = Calendar.current.startOfDay(for: dataWindowRange.upperBound).addingTimeInterval(86400)    // We stop at the end of the last day.
+        
         // We use the calendar to calculate the dates, because it will account for things like DST and leap years.
         Calendar.current.enumerateDates(startingAfter: startingPoint,
                                         matching: DateComponents(hour: 12, minute: 0, second:0),    // We return noon, of each day. This ensures the bars center.
@@ -550,15 +553,11 @@ public extension DataProvider {
         guard let last = dates.last else { return [] }  // Getting the last also tests, to make sure we got something.
         
         // We will now build an array of the dates that will be shown in the chart X-axis labels. We should always have the first day, and the last day.
+        // The in-between values should be evenly spaced, with the possible exception of the last one, which may be inset by one day.
         var ret = [Date]()
-        let divisor = Int(ceil(Double(dates.count) / Double(requestedNumberOfPoints)))
-        for dayCount in 0..<dates.count {
-            if 0 == dayCount % divisor {
-                ret.append(dates[dayCount])
-            }
-        }
-        
-        ret.append(last)
+        let divisor = Int(ceil(Double(dates.count) / Double(requestedNumberOfPoints)))  // The ceil() is where the inset might come from.
+        for dayCount in 0..<dates.count where 0 == dayCount % divisor { ret.append(dates[dayCount]) }
+        ret.append(last)    // This makes sure we have the last value.
         
         return ret
     }
