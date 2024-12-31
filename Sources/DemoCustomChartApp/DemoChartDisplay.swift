@@ -172,16 +172,24 @@ struct DemoChartDisplay: View {
                                 .onChanged { inValue in
                                     _selectedValue = nil    // Make sure to nuke any selection.
                                     
-                                    _firstRange = _firstRange ?? _data.dataWindowRange   // We take a snapshot of the initial range, when we start, so we aren't changing the goalposts as we go.
+                                    // The `_firstRange` property, is used to calculate the new range, after applying magnification.
+                                    // Magnification is always applied to _the initial value_, not to subsequent calculated values, so, if you zoom in, and have a 1.5 magnification, in two steps (1.2, 1.5), the calculation is applied
+                                    // to the state recorded, when the magnification was initially 1.0, not the interim step of 1.2.
+                                    // Once we have determined a final magnification, this property is cleared, and we'll re-record it, the next time we start.
+                                    // It should be noted that we don't track the magnification. Instead, we adjust the `_data.dataWindowRange` property.
+                                    // There will always be an upper bound (`_data.totalDateRange`), and a lower bound (We clamp at a minimum of two days).
+                                    _firstRange = _firstRange ?? _data.dataWindowRange   // We take a snapshot of the initial range (at 1.0 magnification), when we start, so we aren't changing the goalposts as we go.
 
                                     if let firstRange = _firstRange {
                                         // What we are doing here, is applying our initial range, to figure out where the center of the zoom will be, and we'll be setting the new range, to either side of that.
                                         let rangeInSeconds = (firstRange.upperBound.timeIntervalSinceReferenceDate - firstRange.lowerBound.timeIntervalSinceReferenceDate) / 2
                                         let centerDateInSeconds = (TimeInterval(inValue.startAnchor.x) * (rangeInSeconds * 2)) + firstRange.lowerBound.timeIntervalSinceReferenceDate
-                                        let centerDate = Calendar.current.startOfDay(for: Date(timeIntervalSinceReferenceDate: centerDateInSeconds)).addingTimeInterval(43200)
                                         
                                         // No less than 2 days (by setting to 1 day for halfsies). The 1.2 is to "slow down" the magnification a bit, so it's not too intense.
                                         let newRange = max(86400, (rangeInSeconds * 1.2) / inValue.magnification)
+                                        
+                                        var centerDate = Calendar.current.startOfDay(for: Date(timeIntervalSinceReferenceDate: centerDateInSeconds)).addingTimeInterval(43200)
+                                        centerDate = max(_data.totalDateRange.lowerBound.addingTimeInterval(newRange), min(_data.totalDateRange.upperBound.addingTimeInterval(-newRange), centerDate))
                                         
                                         // By changing this, we force a redraw of the chart, with the new limits.
                                         _data.dataWindowRange = (centerDate.addingTimeInterval(-newRange)...centerDate.addingTimeInterval(newRange)).clamped(to: _data.totalDateRange)
