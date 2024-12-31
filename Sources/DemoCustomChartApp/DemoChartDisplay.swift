@@ -68,6 +68,12 @@ struct DemoChartDisplay: View {
         }
     }
 
+    /* ################################################################## */
+    /**
+     This contains the data window, at the start of the gesture. We use this to calculate the magnification, and center of the pinch.
+     */
+    @State private var _firstRange: ClosedRange<Date>?
+
     /* ##################################################### */
     /**
      (Stored Property) This is the actual data that we'll be providing to the chart.
@@ -156,6 +162,32 @@ struct DemoChartDisplay: View {
                                     }
                                 }
                                 .onEnded { _ in _selectedValue = nil }
+                        )
+                    
+                        // This is the gesture context that is attached to the overlay (for the pinch-to-zoom).
+                        .gesture(
+                            // This is the actual gesture that handles magnification.
+                            MagnifyGesture()
+                                // This is where the magic happens. This closure is called, whenever the gesture changes.
+                                .onChanged { inValue in
+                                    _selectedValue = nil    // Make sure to nuke any selection.
+                                    
+                                    _firstRange = _firstRange ?? _data.dataWindowRange   // We take a snapshot of the initial range, when we start, so we aren't changing the goalposts as we go.
+
+                                    if let firstRange = _firstRange {
+                                        // What we are doing here, is applying our initial range, to figure out where the center of the zoom will be, and we'll be setting the new range, to either side of that.
+                                        let rangeInSeconds = (firstRange.upperBound.timeIntervalSinceReferenceDate - firstRange.lowerBound.timeIntervalSinceReferenceDate) / 2
+                                        let centerDateInSeconds = (TimeInterval(inValue.startAnchor.x) * (rangeInSeconds * 2)) + firstRange.lowerBound.timeIntervalSinceReferenceDate
+                                        let centerDate = Calendar.current.startOfDay(for: Date(timeIntervalSinceReferenceDate: centerDateInSeconds)).addingTimeInterval(43200)
+                                        
+                                        // No less than 2 days (by setting to 1 day for halfsies). The 1.2 is to "slow down" the magnification a bit, so it's not too intense.
+                                        let newRange = max(86400, (rangeInSeconds * 1.2) / inValue.magnification)
+                                        
+                                        // By changing this, we force a redraw of the chart, with the new limits.
+                                        _data.dataWindowRange = (centerDate.addingTimeInterval(-newRange)...centerDate.addingTimeInterval(newRange)).clamped(to: _data.totalDateRange)
+                                    }
+                                }
+                                .onEnded { _ in _firstRange = nil } // We reset the initial range, when we're done.
                         )
                 }
             }
