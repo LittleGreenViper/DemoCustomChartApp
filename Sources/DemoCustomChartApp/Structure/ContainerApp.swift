@@ -32,9 +32,7 @@ struct ContainerApp: App {
      (Computed Property) We have a simple `WindowGroup`, containg the rest of the app.
      */
     var body: some Scene {
-        WindowGroup {
-            ChartContainer()
-        }
+        WindowGroup { ChartContainer() }
     }
 }
 
@@ -51,10 +49,7 @@ struct ChartContainer: View {
      */
     var body: some View {
         GeometryReader { inGeometry in
-            GroupBox("User Types, Over Time") {
-                DemoChartDisplay()
-                    .padding()
-            }
+            GroupBox("User Types, Over Time") { DemoChartDisplay().padding() }
             .padding()
             // We want our box to be square, based on the width of the screen.
             .frame(
