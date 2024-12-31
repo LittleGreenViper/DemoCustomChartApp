@@ -494,7 +494,7 @@ public extension DataProvider {
         guard 1 < inNumberOfValues,
               0 < maxUsers
         else { return [] }
-        
+
         // This will be used for the "round up" operation. Crude, but sufficient for our needs.
         let divisors = [4, 8, 20, 100, 200, 400]
         let topDivisorIndex = divisors.last(where: { $0 < maxUsers }) ?? 0
@@ -556,7 +556,8 @@ public extension DataProvider {
         // The in-between values should be evenly spaced, with the possible exception of the last one, which may be inset by one day.
         var ret = [Date]()
         let divisor = Int(ceil(Double(dates.count) / Double(requestedNumberOfPoints)))  // The ceil() is where the inset might come from.
-        for dayCount in 0..<dates.count where 0 == dayCount % divisor { ret.append(dates[dayCount]) }
+        // We add dates, depending on whether or not they are on the "steps," and we don't add any that are less than a day away from the end (prevents overlap).
+        for dayCount in 0..<dates.count where (0 == dayCount % divisor) && (dates[dayCount] < last.addingTimeInterval(-86400)) { ret.append(dates[dayCount]) }
         ret.append(last)    // This makes sure we have the last value.
         
         return ret
