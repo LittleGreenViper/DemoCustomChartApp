@@ -72,7 +72,7 @@ struct DemoChartDisplay: View {
     /**
      This contains the data window, at the start of the gesture. We use this to calculate the magnification, and center of the pinch.
      */
-    @State private var _firstRange: ClosedRange<Date>?
+    @State private var _firstRange: ClosedRange<Date>? { didSet { if oldValue != _firstRange { _selectedValue = nil } } }    // Make sure to nuke any selection.
 
     /* ##################################################### */
     /**
@@ -170,8 +170,6 @@ struct DemoChartDisplay: View {
                             MagnifyGesture()
                                 // This is where the magic happens. This closure is called, whenever the gesture changes.
                                 .onChanged { inValue in
-                                    _selectedValue = nil    // Make sure to nuke any selection.
-                                    
                                     _firstRange = _firstRange ?? _data.dataWindowRange   // We take a snapshot of the initial range, when we start, so we aren't changing the goalposts as we go.
 
                                     if let firstRange = _firstRange {
