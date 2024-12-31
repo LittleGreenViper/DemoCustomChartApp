@@ -18,10 +18,6 @@ We should access the project, by opening [the workspace (`DemoCustomChartApp.xcw
 
 If we do that, the project navigator panel (left side) will look like this (in the [`00.Starting-Point`](https://github.com/LittleGreenViper/DemoCustomChartApp/tree/00.Starting-Point) tag):
 
-| Figure 0: Initial Xcode Navigator Display |
-| :-: |
-| ![Figure 0](img/Fig-00.png) |
-
 ### Support Code
 
 Much of the code is in a subdirectory, labeled [`Sources/DemoCustomChartApp/Structure`](https://github.com/LittleGreenViper/DemoCustomChartApp/tree/master/Sources/DemoCustomChartApp/Structure). This has the files that we won't be looking at.
